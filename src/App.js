@@ -4,85 +4,91 @@ import React, { useState, useEffect, useCallback } from 'react';
 import uuid from 'react-uuid';
 import index from './algo';
 
-function App() {
+function App(props) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [editedMessage, setEditedMessage] = useState('');
   const [editedMessageID, setEditedMessageID] = useState(null);
 
-  const handleInputChange = (event) => {
-    setNewMessage(event.target.value);
-  };
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const { hits } = await index.search(''); // Пустой запрос вернет все сообщения
-      setMessages(hits);
+  const handleAddMessage = useCallback(async () => {
+    const i = props.currentPage;
+    const messageObject = {
+      objectID: uuid(),
+      text: newMessage,
+      pageID: props.currentPage,
+      pageIndex: [i, i + 2, i + 8, i + 18, i + 99],
+      checked: [i, i + 2, i + 8, i + 18, i + 99],
+      сreatedOn: new Date().toISOString(),
     };
 
-    fetchMessages();
-  }, []); // Пустой массив зависимостей означает, что эффект будет выполняться только после монтирования компонента
+    try {
+      // Отправка сообщения в Algolia
+      await index.saveObject(messageObject);
+
+      // Обновление локального состояния после успешной отправки в Algolia
+      setMessages([...messages, messageObject]);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Ошибка при добавлении сообщения в Algolia:', error);
+    }
+  }, [newMessage, messages, props.currentPage]);
 
   const deleteMessage = async (objectID) => {
     try {
+      // Удаление сообщения из Algolia
       await index.deleteObject(objectID);
-      // Успешное удаление, обновите состояние, чтобы отобразить обновленные данные без удаленного сообщения
+
+      // Обновление локального состояния, исключая удаленное сообщение
       setMessages(messages.filter((message) => message.objectID !== objectID));
     } catch (error) {
-      console.error('Ошибка при удалении сообщения:', error);
-      // Обработка ошибки удаления
+      console.error('Ошибка при удалении сообщения из Algolia:', error);
     }
   };
   const editMessage = async () => {
     try {
-      await index.partialUpdateObject({ objectID: editedMessageID, text: editedMessage });
-      // Успешное редактирование, обновите только отредактированное сообщение в состоянии
-      setMessages(
-        messages.map((message) =>
-          message.objectID === editedMessageID ? { ...message, message: editedMessage } : message,
+      // Обновление текста сообщения в Algolia
+      await index.partialUpdateObject({
+        objectID: editedMessageID,
+        text: editedMessage,
+      });
+
+      // Обновление локального состояния, включая отредактированное сообщение
+      setMessages((prevMessages) =>
+        prevMessages.map((message) =>
+          message.objectID === editedMessageID ? { ...message, text: editedMessage } : message,
         ),
       );
-      const updatedMessages = messages.map((message) => {
-        if (message.objectID === editedMessageID) {
-          // Если это редактируемое сообщение, обновите только поле text
-          return { ...message, text: editedMessage };
-        }
-        return message; // Оставьте другие сообщения без изменений
-      });
-      setMessages(updatedMessages);
+
+      // Сброс данных для редактирования
       setEditedMessage('');
       setEditedMessageID(null);
     } catch (error) {
-      console.error('Ошибка при редактировании сообщения:', error);
-      // Обработка ошибки редактирования
+      console.error('Ошибка при редактировании сообщения в Algolia:', error);
     }
   };
-  const handleAddMessage = useCallback(() => {
-    const messageObject = {
-      objectID: uuid(),
-      text: newMessage,
-      pageID: '1',
-      pageIndex: '1',
-      checked: true,
-      сreatedOn: new Date().toISOString(),
+
+  useEffect(() => {
+    // Функция для загрузки сообщений из Algolia
+    const fetchMessagesFromAlgolia = async () => {
+      try {
+        // Выполняем запрос к Algolia
+        const result = await index.search('');
+
+        // Обновляем локальное состояние с данными из Algolia
+        setMessages(result.hits);
+      } catch (error) {
+        console.error('Ошибка при загрузке сообщений из Algolia:', error);
+      }
     };
 
-    // Отправка сообщения в Algolia
-    index
-      .saveObject(messageObject)
-      .then(({ objectID }) => {
-        console.log('Сообщение успешно добавлено с objectID:', objectID);
-        // Обновление локального состояния после успешной отправки в Algolia
-        setMessages([...messages, messageObject]);
-        setNewMessage('');
-      })
-      .catch((error) => {
-        console.error('Ошибка при добавлении сообщения в Algolia:', error);
-      });
+    // Вызываем функцию для загрузки сообщений из Algolia при монтировании компонента
+    fetchMessagesFromAlgolia();
+  }, []); // Пустой массив зависимостей означает, что эффект будет запущен только при монтировании компонента
 
-    // Очистка поля ввода
-    setNewMessage('');
-  }, [newMessage, messages]);
+  const handleInputChange = (event) => {
+    setNewMessage(event.target.value);
+  };
+
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === 'Enter') {
@@ -105,7 +111,7 @@ function App() {
       <div className="chat">
         <div className="chat-title">
           <h1>Norvegian</h1>
-          <h2>Page 1</h2>
+          <h2>Page {props.currentPage}</h2>
           <figure className="avatar">
             <img
               src="https://uploads.commoninja.com/searchengine/wordpress/language-switcher-for-elementor.png"
@@ -116,7 +122,7 @@ function App() {
         <div className="messages">
           <div className="messages-content">
             <ul>
-              {messages.map((message) => (
+              {props.messages.map((message) => (
                 <li key={message.objectID}>
                   <div>
                     {message.text}

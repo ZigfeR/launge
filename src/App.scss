@@ -104,12 +104,12 @@ Chat Title
   overflow-y: scroll;
   &::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #a9aba948;
+    background-color: #082d28;
   }
 
   &::-webkit-scrollbar {
     width: 6px;
-    background-color: #99cb8c48;
+    background-color: #082d28;
   }
 
   &::-webkit-scrollbar-thumb {
@@ -195,4 +195,34 @@ Message Box
       background: #1d7745;
     }
   }
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: lightgray;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.circle.active {
+  background-color: blue;
 }

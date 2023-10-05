@@ -3,15 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import './index.css';
-import App from './App';
-import Messange from './Massege';
+import Pagination from './Pagination';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
-    <div className="body">
-      <App />
-      <Messange />
-    </div>
+    <Pagination />
   </Router>,
 );
