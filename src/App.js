@@ -17,7 +17,12 @@ function App(props) {
       text: newMessage,
       pageID: props.currentPage,
       pageIndex: [i, i + 2, i + 8, i + 18, i + 99],
-      checked: [i, i + 2, i + 8, i + 18, i + 99],
+      checked: [i, i + 2, i + 8, i + 18, i + 99].map((num) => {
+        return {
+          page: num,
+          isChecked: false,
+        };
+      }),
       сreatedOn: new Date().toISOString(),
     };
 
