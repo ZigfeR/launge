@@ -13,12 +13,12 @@ function Messange(props) {
 
   //   fetchMessages();
   // }, []); // Пустой массив зависимостей означает, что эффект будет выполняться только после монтирования компонента
-
+  const page = props.currentPage;
   return (
     <div className="chat">
       <div className="chat-title">
         <h1>Day</h1>
-        <h2>Page {props.currentPage}</h2>
+        <h2>Page {page}</h2>
       </div>
       <div className="messages">
         <div className="messages-content">
