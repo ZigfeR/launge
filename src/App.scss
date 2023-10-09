@@ -116,7 +116,9 @@ Chat Title
     background-color: #99cb8c48;
   }
 }
-
+#highlighted {
+  background-color: rgb(89, 255, 0);
+}
 ul {
   list-style-type: none;
   padding-inline: 10%;
@@ -127,6 +129,7 @@ ul {
     display: flex;
     flex-direction: column;
     position: relative;
+
     div {
       display: flex;
       justify-content: space-between;
