@@ -112,9 +112,15 @@ function App(props) {
         <div className="chat-title">
           <h1>Norvegian</h1>
           <h2>Page {props.currentPage}</h2>
-          <figure className="avatar">
+          <figure className="avatar avatarEdited">
             <img
               src="https://uploads.commoninja.com/searchengine/wordpress/language-switcher-for-elementor.png"
+              alt="img"
+            />
+          </figure>
+          <figure className="avatar avatarSpelling">
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ466tCJrc_5MSp_-7oImxSn7zt4PrqLJE5Juy2yPDuO3s5m7ufCSXowrKig6r0zDslx8&usqp=CAU"
               alt="img"
             />
           </figure>

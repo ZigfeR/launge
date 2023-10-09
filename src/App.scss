@@ -81,10 +81,6 @@ Chat Title
   }
 
   .avatar {
-    position: absolute;
-    z-index: 1;
-    top: 8px;
-    left: 9px;
     border-radius: 30px;
     width: 30px;
     height: 30px;
@@ -97,6 +93,18 @@ Chat Title
       width: 100%;
       height: auto;
     }
+  }
+  .avatarEdited {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 9px;
+  }
+  .avatarSpelling {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    right: 9px;
   }
 }
 .messages {
