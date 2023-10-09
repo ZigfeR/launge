@@ -37,7 +37,11 @@ function Messange(props) {
             {props.messages.map((message) => (
               <li
                 key={message.objectID}
-                id={highlightedItems.includes(message.objectID) ? 'highlighted' : ''}
+                id={
+                  highlightedItems.includes(message.objectID)
+                    ? 'highlightedTrue'
+                    : 'highlightedFalse'
+                }
                 onClick={() => toggleHighlight(message.objectID)}>
                 {message.text}
               </li>
