@@ -150,7 +150,7 @@ function Pagination() {
   return (
     <div className="go">
       <div className="body">
-        <App messages={messagesApp} currentPage={currentPage} />
+        <App messages={messagesApp} currentPage={currentPage === 0 ? 1 : currentPage} />
         {(currentPage <= 2 && (
           <>
             <Messange messages={messagesOne} currentPage={currentPage} />
