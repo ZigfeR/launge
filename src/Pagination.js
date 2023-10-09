@@ -153,7 +153,7 @@ function Pagination() {
         <App messages={messagesApp} currentPage={currentPage === 0 ? 1 : currentPage} />
         {(currentPage <= 2 && (
           <>
-            <Messange messages={messagesOne} currentPage={currentPage} />
+            <Messange messages={messagesOne} currentPage={currentPage === 0 ? 1 : currentPage} />
           </>
         )) ||
           (currentPage >= 3 && currentPage <= 8 && (
