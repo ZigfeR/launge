@@ -1,65 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import './App.scss';
-import index from './algo';
+import { library, pages } from './algo';
 import Messange from './Massege';
 import App from './App';
 
+const maxPage = 100;
+
 function Pagination() {
+  const [arraysPages, setArraysPages] = useState([]);
   const [messagesApp, setMessagesApp] = useState([]);
   const [messagesOne, setMessagesOne] = useState([]);
   const [messagesTwo, setMessagesTwo] = useState([]);
   const [messagesTree, setMessagesTree] = useState([]);
   const [messagesFour, setMessagesFour] = useState([]);
   const [messagesFive, setMessagesFive] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(0);
   const fetchApp = (page) => {
     const searchOptions = {
       filters: `pageID:${page}`,
     };
 
-    return index.search('', searchOptions);
+    return library.search('', searchOptions);
   };
+  const fetchPages = (page) => {
+    const searchOptions = {
+      filters: `objectID:${page}`,
+    };
+
+    return pages.search('', searchOptions);
+  };
+
   const fetchData = (page) => {
     const searchOptions = {
       filters: `pageIndex:${page}`,
     };
 
-    return index.search('', searchOptions);
+    return library.search('', searchOptions);
   };
 
-  const fetchMaxPage = () => {
-    return index.search('');
-  };
+  // const fetchMaxPage = () => {
+  //   return index.search('');
+  // };
 
   useEffect(() => {
-    fetchMaxPage()
-      .then((result) => {
-        const pageIndexArrays = result.hits.map((item) => item.pageIndex);
-        const maxPages = pageIndexArrays.reduce((max, currentPageArray) => {
-          const currentPageMax = Math.max(...currentPageArray);
-          return currentPageMax > max ? currentPageMax : max;
-        }, 0);
+    // fetchMaxPage()
+    //   .then((result) => {
+    //     const pageIndexArrays = result.hits.map((item) => item.pageIndex);
+    //     const maxPages = pageIndexArrays.reduce((max, currentPageArray) => {
+    //       const currentPageMax = Math.max(...currentPageArray);
+    //       return currentPageMax > max ? currentPageMax : max;
+    //     }, 0);
 
-        console.log(maxPages); // Выведет максимальное значение из свойства pageIndex
-        setTotalPages(maxPages);
-      })
-      .catch((error) => {
-        console.error('Ошибка при выполнении запроса в Algolia для максимальной страницы:', error);
-      });
-    fetchData(currentPage)
-      .then((result) => {
-        const fetchedMessages = result.hits;
-        setMessagesOne(fetchedMessages);
-      })
-      .catch((error) => {
-        console.error('Ошибка при выполнении запроса в Algolia:', error);
-      });
+    //     console.log(maxPages); // Выведет максимальное значение из свойства pageIndex
+    //     setTotalPages(maxPages);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Ошибка при выполнении запроса в Algolia для максимальной страницы:', error);
+    //   });
     fetchApp(currentPage)
       .then((result) => {
         const fetchedMessage = result.hits;
         setMessagesApp(fetchedMessage);
+      })
+      .catch((error) => {
+        console.error('Ошибка при выполнении запроса в Algolia:', error);
+      });
+
+    fetchPages('cd16e57fea956_dashboard_generated_id')
+      .then((result) => {
+        const fetchedPages = result.hits;
+        setArraysPages(fetchedPages);
+        console.log(fetchedPages); // Выведет максимальное значение из свойства pageIndex
+      })
+      .catch((error) => {
+        console.error('Ошибка при выполнении запроса в Algolia:', error);
+      });
+
+    fetchData(currentPage)
+      .then((result) => {
+        const fetchedMessages = result.hits;
+        setMessagesOne(fetchedMessages);
       })
       .catch((error) => {
         console.error('Ошибка при выполнении запроса в Algolia:', error);
@@ -111,7 +132,7 @@ function Pagination() {
   const renderPagination = () => {
     const pagesToShow = 20;
     const startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
-    const endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+    const endPage = Math.min(maxPage, startPage + pagesToShow - 1);
 
     const paginationItems = [];
     for (let i = startPage; i <= endPage; i++) {
@@ -134,7 +155,7 @@ function Pagination() {
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < maxPage) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -144,16 +165,16 @@ function Pagination() {
   };
 
   const goToLastPage = () => {
-    setCurrentPage(totalPages);
+    setCurrentPage(maxPage);
   };
 
   return (
     <div className="go">
       <div className="body">
-        <App messages={messagesApp} currentPage={currentPage === 0 ? 1 : currentPage} />
+        <App messages={messagesApp} currentPage={currentPage} arraysPages={arraysPages} />
         {(currentPage <= 2 && (
           <>
-            <Messange messages={messagesOne} currentPage={currentPage === 0 ? 1 : currentPage} />
+            <Messange messages={messagesOne} currentPage={currentPage} />
           </>
         )) ||
           (currentPage >= 3 && currentPage <= 8 && (
@@ -194,7 +215,7 @@ function Pagination() {
             Предыдущая
           </button>
           {renderPagination()}
-          <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+          <button onClick={goToNextPage} disabled={currentPage === maxPage}>
             Следующая
           </button>
           <button onClick={goToLastPage}>Перейти к концу</button>

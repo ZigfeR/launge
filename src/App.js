@@ -2,7 +2,7 @@ import './App.scss';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import uuid from 'react-uuid';
-import index from './algo';
+import { library } from './algo';
 
 function App(props) {
   const [messages, setMessages] = useState([]);
@@ -28,7 +28,7 @@ function App(props) {
 
     try {
       // Отправка сообщения в Algolia
-      await index.saveObject(messageObject);
+      await library.saveObject(messageObject);
 
       // Обновление локального состояния после успешной отправки в Algolia
       setMessages([...messages, messageObject]);
@@ -41,7 +41,7 @@ function App(props) {
   const deleteMessage = async (objectID) => {
     try {
       // Удаление сообщения из Algolia
-      await index.deleteObject(objectID);
+      await library.deleteObject(objectID);
 
       // Обновление локального состояния, исключая удаленное сообщение
       setMessages(messages.filter((message) => message.objectID !== objectID));
@@ -52,7 +52,7 @@ function App(props) {
   const editMessage = async () => {
     try {
       // Обновление текста сообщения в Algolia
-      await index.partialUpdateObject({
+      await library.partialUpdateObject({
         objectID: editedMessageID,
         text: editedMessage,
       });
@@ -77,7 +77,7 @@ function App(props) {
     const fetchMessagesFromAlgolia = async () => {
       try {
         // Выполняем запрос к Algolia
-        const result = await index.search('');
+        const result = await library.search('');
 
         // Обновляем локальное состояние с данными из Algolia
         setMessages(result.hits);
@@ -116,7 +116,7 @@ function App(props) {
       <div className="chat">
         <div className="chat-title">
           <h1>Norvegian</h1>
-          <h2>Page {props.currentPage}</h2>
+          <h2>Leasson {props.currentPage}</h2>
           <figure className="avatar avatarEdited">
             <img
               src="https://uploads.commoninja.com/searchengine/wordpress/language-switcher-for-elementor.png"
