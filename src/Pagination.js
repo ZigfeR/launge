@@ -129,7 +129,10 @@ function Pagination() {
     }
   }, [currentPage]);
 
-  const renderPagination = () => {
+  const handlePaginationClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+  const renderPagination = (handleClick) => {
     const pagesToShow = 20;
     const startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
     const endPage = Math.min(maxPage, startPage + pagesToShow - 1);
@@ -140,7 +143,7 @@ function Pagination() {
         <div
           key={i}
           className={`circle ${i === currentPage ? 'active' : ''}`}
-          onClick={() => setCurrentPage(i)}>
+          onClick={() => handleClick(i)}>
           {i}
         </div>,
       );
@@ -214,7 +217,7 @@ function Pagination() {
           <button onClick={goToPreviousPage} disabled={currentPage === 1}>
             Предыдущая
           </button>
-          {renderPagination()}
+          {renderPagination(handlePaginationClick)}
           <button onClick={goToNextPage} disabled={currentPage === maxPage}>
             Следующая
           </button>
