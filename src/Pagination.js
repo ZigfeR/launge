@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.scss';
 import { library, pages } from './algo';
 import Messange from './Massege';
 import App from './App';
+import uuid from 'react-uuid';
 
 const maxPage = 100;
 
 function Pagination() {
   const [arraysPages, setArraysPages] = useState([]);
+  const [arraysPag, setArraysPag] = useState([]);
   const [messagesApp, setMessagesApp] = useState([]);
   const [messagesOne, setMessagesOne] = useState([]);
   const [messagesTwo, setMessagesTwo] = useState([]);
@@ -15,7 +17,10 @@ function Pagination() {
   const [messagesFour, setMessagesFour] = useState([]);
   const [messagesFive, setMessagesFive] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [addPages, setAddPages] = useState([]);
   // const [totalPages, setTotalPages] = useState(0);
+  const generatedObjectID = uuid();
+
   const fetchApp = (page) => {
     const searchOptions = {
       filters: `pageID:${page}`,
@@ -39,11 +44,23 @@ function Pagination() {
     return library.search('', searchOptions);
   };
 
-  // const fetchMaxPage = () => {
-  //   return index.search('');
-  // };
+  const fetchMaxPage = () => {
+    return pages.search('');
+  };
 
   useEffect(() => {
+    fetchMaxPage()
+      .then((result) => {
+        const pageIndexArrays = result.hits.map((item) => item.objectID);
+
+        setArraysPag(pageIndexArrays);
+
+        console.log(pageIndexArrays);
+      })
+      .catch((error) => {
+        console.error('Ошибка при выполнении запроса в Algolia для масива:', error);
+      });
+
     // fetchMaxPage()
     //   .then((result) => {
     //     const pageIndexArrays = result.hits.map((item) => item.pageIndex);
@@ -67,11 +84,11 @@ function Pagination() {
         console.error('Ошибка при выполнении запроса в Algolia:', error);
       });
 
-    fetchPages('cd16e57fea956_dashboard_generated_id')
+    fetchPages('9a3b30cd-f671-862b-5087-1be843f7ce8b')
       .then((result) => {
         const fetchedPages = result.hits;
         setArraysPages(fetchedPages);
-        console.log(fetchedPages); // Выведет максимальное значение из свойства pageIndex
+        console.log(fetchedPages);
       })
       .catch((error) => {
         console.error('Ошибка при выполнении запроса в Algolia:', error);
@@ -128,8 +145,35 @@ function Pagination() {
         });
     }
   }, [currentPage]);
+  const handleAddPages = useCallback(
+    async (pageNumber) => {
+      const i = pageNumber;
+      const pageObject = {
+        objectID: generatedObjectID,
+        pageName: `Leasson ${pageNumber}`,
+        pageIndex: [i, i + 2, i + 8, i + 18, i + 99],
+      };
+
+      try {
+        // Проверка существующей записи по objectID
+
+        if (!arraysPag.includes(generatedObjectID)) {
+          await pages.saveObject(pageObject);
+          console.log(`Новая страница создана с objectID ${generatedObjectID}.`);
+          setAddPages([...addPages, pageObject]);
+        } else {
+          console.log(`Страница с objectID ${generatedObjectID} уже существует.`);
+        }
+      } catch (error) {
+        console.error('Ошибка при добавлении страницы в Algolia:', error);
+      }
+    },
+    [addPages, arraysPag, generatedObjectID],
+  );
 
   const handlePaginationClick = (pageNumber) => {
+    handleAddPages(pageNumber);
+
     setCurrentPage(pageNumber);
   };
   const renderPagination = (handleClick) => {

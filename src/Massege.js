@@ -29,7 +29,7 @@ function Messange(props) {
     <div className="chat">
       <div className="chat-title">
         <h1>Day</h1>
-        <h2>Leasson {page}</h2>
+        <h2>Page {page}</h2>
       </div>
       <div className="messages">
         <div className="messages-content">
