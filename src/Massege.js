@@ -4,17 +4,7 @@ import './App.scss';
 // import React, { useState, useEffect } from 'react';
 
 function Messange(props) {
-  // const [messages, setMessages] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchMessages = async () => {
-  //     const { hits } = await index.search(''); // Пустой запрос вернет все сообщения
-  //     setMessages(hits);
-  //   };
-
-  //   fetchMessages();
-  // }, []); // Пустой массив зависимостей означает, что эффект будет выполняться только после монтирования компонента
-  const page = props.currentPage;
+  const page = props.arraysPages.pageIndex;
   const [highlightedItems, setHighlightedItems] = useState([]);
 
   const toggleHighlight = (messageId) => {

@@ -11,11 +11,11 @@ function App(props) {
   const [editedMessageID, setEditedMessageID] = useState(null);
 
   const handleAddMessage = useCallback(async () => {
-    const i = props.currentPage;
+    const i = props.arraysPages.pageIndex;
     const messageObject = {
       objectID: uuid(),
       text: newMessage,
-      pageID: props.arraysPages[0].objectID,
+      pageID: props.arraysPages.objectID,
       pageIndex: [i, i + 2, i + 8, i + 18, i + 99],
       checked: [i, i + 2, i + 8, i + 18, i + 99].map((num) => {
         return {
@@ -36,7 +36,7 @@ function App(props) {
     } catch (error) {
       console.error('Ошибка при добавлении сообщения в Algolia:', error);
     }
-  }, [newMessage, messages, props.currentPage, props.arraysPages]);
+  }, [newMessage, messages, props.arraysPages]);
 
   const deleteMessage = async (objectID) => {
     try {
@@ -116,7 +116,7 @@ function App(props) {
       <div className="chat">
         <div className="chat-title">
           <h1>Norvegian</h1>
-          <h2>{props.arraysPages[0]?.pageName || 'Пусто'}</h2>
+          <h2>{props.arraysPages.pageName || 'Пусто'}</h2>
           <figure className="avatar avatarEdited">
             <img
               src="https://uploads.commoninja.com/searchengine/wordpress/language-switcher-for-elementor.png"
