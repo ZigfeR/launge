@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
-import Pagination from './Pagination';
+import Pagination from './components/Pagination/Pagination';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Router>
+  <BrowserRouter>
     <Pagination />
-  </Router>,
+  </BrowserRouter>,
 );

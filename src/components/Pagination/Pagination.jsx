@@ -1,30 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './App.scss';
-import { library, pages } from './algo';
-import Messange from './Massege';
-import App from './App';
+import { library, pages } from '../../noGit/algo.js';
 import uuid from 'react-uuid';
+
+import Library from '../Library/Library.jsx';
+import WordCreator from '../WordCreator/WordCreator.jsx';
 
 const maxPage = 100;
 
 function Pagination() {
-  // const [arraysPages, setArraysPages] = useState([]);
+  const [words, setWords] = useState([]);
   const [arraysPag, setArraysPag] = useState([]);
-  // const [messagesApp, setMessagesApp] = useState([]);
-  // const [messagesOne, setMessagesOne] = useState([]);
-  // const [messagesTwo, setMessagesTwo] = useState([]);
-  // const [messagesTree, setMessagesTree] = useState([]);
-  // const [messagesFour, setMessagesFour] = useState([]);
-  const [messag, setMessages] = useState([]);
-  // const [messagesFive, setMessagesFive] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [addPages, setAddPages] = useState([]);
   const [isRequestSent, setIsRequestSent] = useState(false);
-  // const [totalPages, setTotalPages] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const generatedObjectID = uuid();
+
+  let activePageID;
 
   const fetchApp = (page) => {
     const searchOptions = {
@@ -41,6 +35,7 @@ function Pagination() {
 
     return pages.search('', searchOptions);
   };
+
   const fetchPagesIndex = (page) => {
     const searchOptions = {
       filters: `pageIndex:${page}`,
@@ -48,17 +43,17 @@ function Pagination() {
 
     return pages.search('', searchOptions);
   };
-  let more;
+
   const fetchPagesAsyn = async (pageNumber) => {
     try {
       const result = await fetchPagesIndex(pageNumber);
-      const fetchedMessages = result.hits;
-      // setMessagesOne(fetchedMessages[0]);
-      more = fetchedMessages[0];
+      const fetchedWords = result.hits;
+      activePageID = fetchedWords[0];
     } catch (error) {
       console.error('Ошибка при выполнении запроса в Algolia:', error);
     }
   };
+
   const fetchData = (page) => {
     const searchOptions = {
       filters: `pageIndex:${page}`,
@@ -94,17 +89,17 @@ function Pagination() {
 
         await fetchPagesAsyn(currentPage);
 
-        if (more && more.objectID) {
+        if (activePageID && activePageID.objectID) {
           const [app, pages, one, two, tree, four, five] = await Promise.all([
-            fetchApp(more.objectID),
-            fetchPages(more.objectID),
+            fetchApp(activePageID.objectID),
+            fetchPages(activePageID.objectID),
             fetchDataAsync(currentPage, 0),
             fetchDataAsync(currentPage, 2),
             fetchDataAsync(currentPage, 6),
             fetchDataAsync(currentPage, 10),
             fetchDataAsync(currentPage, 81),
           ]);
-          setMessages({
+          setWords({
             app: app.hits,
             pages: pages.hits[0],
             one,
@@ -116,7 +111,9 @@ function Pagination() {
           console.log('Данные успешно загружены');
           setDataLoaded(true);
         } else {
-          console.log('more или more.objectID не определены. Невозможно выполнить запросы данных.');
+          console.log(
+            'activePageID или activePageID.objectID не определены. Невозможно выполнить запросы данных.',
+          );
         }
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error);
@@ -154,6 +151,7 @@ function Pagination() {
     checkAndAddPage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
+
   const handleAddPages = useCallback(
     async (pageNumber) => {
       const i = pageNumber;
@@ -164,14 +162,12 @@ function Pagination() {
         pageList: [i, i + 2, i + 8, i + 18, i + 99],
       };
 
-      // console.log(`Страница с ${messagesOne.pageIndex} .`);
-      // console.log(`Страница с ${messag} .`);
       try {
-        if (more && more.pageIndex !== undefined) {
+        if (activePageID && activePageID.pageIndex !== undefined) {
           // Проверка существующей записи по objectID
 
-          if (arraysPag.includes(more.objectID)) {
-            console.log(`Страница с objectID ${more.objectID} уже существует.`);
+          if (arraysPag.includes(activePageID.objectID)) {
+            console.log(`Страница с objectID ${activePageID.objectID} уже существует.`);
           } else {
             await pages.saveObject(pageObject);
             console.log(`Новая страница создана с objectID ${generatedObjectID}.`);
@@ -191,10 +187,14 @@ function Pagination() {
   );
 
   const handlePaginationClick = async (pageNumber) => {
+    setWords({
+      ...words,
+      pages: [],
+    });
+
     await fetchPagesAsyn(pageNumber);
     setCurrentPage(pageNumber);
     await handleAddPages(pageNumber);
-    console.log(`Страница с ${messag} .`);
   };
   const renderPagination = (handleClick) => {
     const pagesToShow = 20;
@@ -214,42 +214,53 @@ function Pagination() {
     });
   };
 
+  const navigateToPage = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= maxPage) {
+      handlePaginationClick(pageNumber);
+    }
+  };
+
   const goToPreviousPage = () => {
     if (currentPage > 1) {
-      handlePaginationClick(currentPage - 1);
+      navigateToPage(currentPage - 1);
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < maxPage) {
-      handlePaginationClick(currentPage + 1);
+      navigateToPage(currentPage + 1);
     }
   };
 
   const goToFirstPage = () => {
-    handlePaginationClick(1);
+    navigateToPage(1);
   };
 
   const goToLastPage = () => {
-    handlePaginationClick(maxPage);
+    navigateToPage(maxPage);
   };
-
+  function isEmpty(value) {
+    return (
+      value === null ||
+      value === undefined ||
+      (typeof value === 'object' && Object.keys(value).length === 0) ||
+      (Array.isArray(value) && value.length === 0)
+    );
+  }
   return (
     <>
       {dataLoaded && (
         <div className="go">
           <div className="body">
-            <App messages={messag.app} currentPage={currentPage} arraysPages={messag.pages} />
-            {messag.one ? (
+            {!isEmpty(words.pages) && (
               <>
-                <Messange
-                  messages={messag.one}
+                <WordCreator
+                  words={words.app}
                   currentPage={currentPage}
-                  arraysPages={messag.pages}
+                  arraysPages={words.pages}
                 />
+                <Library words={words.one} currentPage={currentPage} arraysPages={words.pages} />
               </>
-            ) : (
-              <p>Нет данных для отображения</p>
             )}
             {/* {(currentPage <= 2 && (
               <>

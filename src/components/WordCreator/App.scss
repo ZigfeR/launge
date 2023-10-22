@@ -21,26 +21,17 @@ body {
   overflow: hidden;
 }
 .body {
+  height: 80vh;
+  max-height: 600px;
   margin-top: 7%;
   display: flex;
   justify-content: space-evenly;
 }
-.bg {
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  background: url('https://images.unsplash.com/photo-1451186859696-371d9477be93?crop=entropy&fit=crop&fm=jpg&h=975&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1925')
-    no-repeat 0 0;
-  filter: blur(80px);
-  transform: scale(1.2);
-}
 
 /*--------------------
-Chat
+library
 --------------------*/
-.chat {
+.library {
   width: 300px;
   height: 80vh;
   max-height: 600px;
@@ -55,9 +46,9 @@ Chat
 }
 
 /*--------------------
-Chat Title
+library Title
 --------------------*/
-.chat-title {
+.library-title {
   flex: 0 1 45px;
   position: relative;
   z-index: 2;
@@ -108,7 +99,10 @@ Chat Title
     right: 9px;
   }
 }
-.messages {
+/*--------------------
+Words container
+--------------------*/
+.words {
   height: 100%;
   overflow-y: scroll;
   &::-webkit-scrollbar-track {
@@ -143,13 +137,13 @@ ul {
       display: flex;
       justify-content: space-between;
     }
-    .message-editedMessageID {
+    .words-editedWordsID {
       margin-top: 5px;
     }
-    .message-edited {
+    .words-edited {
       width: 80%;
     }
-    .message-save {
+    .words-save {
       position: absolute;
       right: 5px;
     }
@@ -162,15 +156,15 @@ ul {
   }
 }
 /*--------------------
-Message Box
+Words Box
 --------------------*/
-.message-box {
+.words-box {
   flex: 0 1 40px;
   width: 100%;
   background: rgba(0, 0, 0, 0.3);
   padding: 10px;
   position: relative;
-  & .message-input {
+  & .words-input {
     background: none;
     border: none;
     outline: none !important;
@@ -187,7 +181,7 @@ Message Box
     color: transparent;
   }
 
-  & .message-submit {
+  & .words-submit {
     position: absolute;
     z-index: 1;
     top: 9px;
