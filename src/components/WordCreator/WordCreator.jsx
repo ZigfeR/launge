@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { addWordToAlgolia, deleteWordFromAlgolia, editWordInAlgolia } from './WordCreatorAlgolia';
-import { fetchWordsFromAlgolia } from '../../algoliaFunctions/algoliaFunctions';
-
-import './App.scss';
 
 function WordCreator(props) {
   const [words, setWords] = useState([]);
@@ -10,14 +7,12 @@ function WordCreator(props) {
   const [editedWords, setEditedWords] = useState('');
   const [editedWordsID, setEditedWordsID] = useState(null);
 
-  useEffect(() => {
-    fetchWordsFromAlgolia(setWords);
-  }, []);
-
+  // Функция для добавления нового слова в Algolia
   const handleAddWords = useCallback(async () => {
     addWordToAlgolia(newWords, words, setWords, setNewWords, props);
   }, [newWords, words, props]);
 
+  // Функция для удаления слова из Algolia
   const handleDeleteWords = useCallback(
     async (objectID) => {
       deleteWordFromAlgolia(objectID, words, setWords);
@@ -25,6 +20,7 @@ function WordCreator(props) {
     [words],
   );
 
+  // Функция для редактирования слова в Algolia
   const handleEditWords = useCallback(async () => {
     editWordInAlgolia(
       editedWordsID,
@@ -40,6 +36,7 @@ function WordCreator(props) {
     setNewWords(event.target.value);
   };
 
+  //Отправка сообщений по нажатию Enter
   const handleKeyPress = useCallback(
     (event) => {
       if (event.key === 'Enter') {
