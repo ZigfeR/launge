@@ -1,6 +1,6 @@
 // Выносим функции, связанные с Algolia, в отдельный модуль
 import uuid from 'react-uuid';
-import { library } from '../../noGit/algo.js'; // Предполагаем, что у вас есть модуль с функциями для работы с Algolia
+import { library } from '../../../noGit/algo.js'; // Предполагаем, что у вас есть модуль с функциями для работы с Algolia
 
 // Функция для добавления нового слова в Algolia
 async function addWordToAlgolia(newWords, words, setWords, setNewWords, props) {

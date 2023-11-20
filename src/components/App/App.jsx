@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-
 import Library from '../Library/Library.jsx';
-import WordCreator from '../WordCreator/WordCreator.jsx';
+import WordBlock from '../WordBlock/WordBlock.jsx';
 import Pagination from './../Pagination/Pagination.jsx';
 
 function App() {
@@ -31,7 +30,7 @@ function App() {
         <div className="body">
           {!isEmpty(library.pages) && (
             <>
-              <WordCreator
+              <WordBlock
                 words={library.app}
                 currentPage={currentPage}
                 arraysPages={library.pages}

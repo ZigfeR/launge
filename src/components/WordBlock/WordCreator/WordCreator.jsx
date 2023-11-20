@@ -9,7 +9,7 @@ function WordCreator(props) {
 
   // Функция для добавления нового слова в Algolia
   const handleAddWords = useCallback(async () => {
-    addWordToAlgolia(newWords, words, setWords, setNewWords, props);
+    addWordToAlgolia(newWords, words, setWords, setNewWords, props.props);
   }, [newWords, words, props]);
 
   // Функция для удаления слова из Algolia
@@ -52,29 +52,12 @@ function WordCreator(props) {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, [handleKeyPress]);
-
   return (
-    <div className="library">
-      <div className="library-title">
-        <h1>Norvegian</h1>
-        <h2>{props.arraysPages.pageName || 'Пусто'}</h2>
-        <figure className="avatar avatarEdited">
-          <img
-            src="https://uploads.commoninja.com/searchengine/wordpress/language-switcher-for-elementor.png"
-            alt="img"
-          />
-        </figure>
-        <figure className="avatar avatarSpelling">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ466tCJrc_5MSp_-7oImxSn7zt4PrqLJE5Juy2yPDuO3s5m7ufCSXowrKig6r0zDslx8&usqp=CAU"
-            alt="img"
-          />
-        </figure>
-      </div>
+    <>
       <div className="words">
         <div className="words-content">
           <ul>
-            {props.words.map((word) => (
+            {props.props.words.map((word) => (
               <li key={word.objectID}>
                 <div>
                   {word.text}
@@ -120,7 +103,7 @@ function WordCreator(props) {
           Send
         </button>
       </div>
-    </div>
+    </>
   );
 }
 
